@@ -50,11 +50,15 @@
                 </td>
                 <td>
                     <span>
+                        <a href="{% url 'toko:removeQty' pItem.produk_item.slug %}" class="">
                         <i class="fas fa-circle-minus fa-lg text-danger mx-2"></i>
+                        </a>
                     </span>
                     {{ pItem.quantity }}
                     <span>
-                        <i class="fas fa-circle-plus fa-lg text-danger mx-2"></i>
+                        <a href="{% url 'toko:addQty' pItem.produk_item.slug %}" class="">
+                            <i class="fas fa-circle-plus fa-lg text-danger mx-2"></i>
+                        </a>
                     </span>
                 </td>
                 <td>                

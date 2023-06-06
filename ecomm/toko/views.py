@@ -178,6 +178,76 @@ def remove_from_cart(request, slug):
             return redirect('toko:produk-detail',slug = slug)
     else:
         return redirect('/accounts/login')
+def addQty(request, slug):
+    if request.user.is_authenticated:
+        produk_item = get_object_or_404(ProdukItem, slug=slug)
+        order_produk_item, _ = OrderProdukItem.objects.get_or_create(
+            produk_item=produk_item,
+            user=request.user,
+            ordered=False
+        )
+        order_query = Order.objects.filter(user=request.user, ordered=False)
+        if order_query.exists():
+            order = order_query[0]
+            if order.produk_items.filter(produk_item__slug=produk_item.slug).exists():
+                order_produk_item.quantity += 1
+                order_produk_item.save()
+                pesan = f"ProdukItem sudah diupdate menjadi: { order_produk_item.quantity }"
+                messages.info(request, pesan)
+                return redirect('toko:order-summary')
+            else:
+                order.produk_items.add(order_produk_item)
+                messages.info(request, 'ProdukItem pilihanmu sudah ditambahkan')
+                return redirect('toko:order-summary')
+        else:
+            tanggal_order = timezone.now()
+            order = Order.objects.create(user=request.user, tanggal_order=tanggal_order)
+            order.produk_items.add(order_produk_item)
+            messages.info(request, 'ProdukItem pilihanmu sudah ditambahkan')
+            return redirect('toko:order-summary')
+    else:
+        return redirect('/accounts/login')
+def removeQty(request, slug):
+    if request.user.is_authenticated:
+        produk_item = get_object_or_404(ProdukItem, slug=slug)
+        order_produk_item, _ = OrderProdukItem.objects.get_or_create(
+            produk_item=produk_item,
+            user=request.user,
+            ordered=False
+        )
+        order_query = Order.objects.filter(user=request.user, ordered=False)
+        if order_query.exists():
+            order = order_query[0]
+            if order.produk_items.filter(produk_item__slug=produk_item.slug).exists():
+                if order_produk_item.quantity == 0:
+                    order_produk_item = OrderProdukItem.objects.filter(
+                        produk_item=produk_item,
+                        user=request.user,
+                        ordered=False
+                    )[0]
+                    order.produk_items.remove(order_produk_item)
+                    order_produk_item.delete()
+
+                    pesan = f"ProdukItem sudah dihapus"
+                    messages.info(request, pesan)
+                    return redirect('toko:order-summary')
+                order_produk_item.quantity -= 1
+                order_produk_item.save()
+                pesan = f"ProdukItem sudah diupdate menjadi: { order_produk_item.quantity }"
+                messages.info(request, pesan)
+                return redirect('toko:order-summary')
+            else:
+                order.produk_items.add(order_produk_item)
+                messages.info(request, 'ProdukItem pilihanmu sudah ditambahkan')
+                return redirect('toko:order-summary')
+        else:
+            tanggal_order = timezone.now()
+            order = Order.objects.create(user=request.user, tanggal_order=tanggal_order)
+            order.produk_items.add(order_produk_item)
+            messages.info(request, 'ProdukItem pilihanmu sudah dikurangi')
+            return redirect('toko:order-summary')
+    else:
+        return redirect('/accounts/login')
 
 # @csrf_exempt
 def paypal_return(request):
