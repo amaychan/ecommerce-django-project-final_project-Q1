@@ -48,7 +48,15 @@
                         {% endif %}
                     </div>
                 </td>
-                <td>{{ pItem.quantity }}</td>
+                <td>
+                    <span>
+                        <i class="fas fa-circle-minus fa-lg text-danger mx-2"></i>
+                    </span>
+                    {{ pItem.quantity }}
+                    <span>
+                        <i class="fas fa-circle-plus fa-lg text-danger mx-2"></i>
+                    </span>
+                </td>
                 <td>                
                     {% if pItem.produk_item.harga_diskon %}
                     ${{ pItem.get_total_harga_diskon_item }}
