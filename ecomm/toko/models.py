@@ -105,7 +105,7 @@ class Order(models.Model):
 
 class AlamatPengiriman(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    alamat_1 = models.CharField(max_length=100)
+    alamat_1 = models.TextField(max_length=255)
     alamat_2 = models.CharField(max_length=100)
     negara = models.CharField(max_length=100)
     kode_pos = models.CharField(max_length=20)
