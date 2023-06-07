@@ -343,17 +343,43 @@ def cod_return(request):
             order_produk_item = OrderProdukItem.objects.filter(user=request.user,ordered=False)
             order_produk_item.update(ordered=True)
             
-            # order.payment = payment
+            order.payment = payment
             order.ordered = True
             order.save()
 
-            messages.info(request, 'Menunggu Pembayaran COD, terima kasih')
+            messages.info(request, 'Menunggu Pembayaran COD, Terimakasih')
             return redirect('toko:home-produk-list')
         except ObjectDoesNotExist:
             messages.error(request, 'Periksa kembali pesananmu')
             return redirect('toko:order-summary')
     else:
         return redirect('/accounts/login')
+def alfa_return(request):
+    if request.user.is_authenticated:
+        try:
+            order = Order.objects.get(user=request.user, ordered=False)
+            payment = Payment()
+            payment.user=request.user
+            payment.amount = order.get_total_harga_order()
+            payment.payment_option = 'A'
+            payment.charge_id = f'{order.id}-{timezone.now()}'
+            payment.timestamp = timezone.now()
+            payment.save()
+            
+            order_produk_item = OrderProdukItem.objects.filter(user=request.user,ordered=False)
+            order_produk_item.update(ordered=True)
+            order.payment = payment
+            order.ordered = True
+            order.save()
+
+            messages.info(request, 'Menunggu pembayaran ke Merchant Alfamart, Terimakasih')
+            return redirect('toko:home-produk-list')
+        except ObjectDoesNotExist:
+            messages.error(request, 'Periksa kembali pesananmu')
+            return redirect('toko:order-summary')
+    else:
+        return redirect('/accounts/login')
+
 
 # @csrf_exempt
 def paypal_cancel(request):

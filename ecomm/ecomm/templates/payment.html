@@ -19,6 +19,19 @@
             <a href="{% url 'toko:cod-return'%}"><div class="btn btn-info">Yuk Lanjut Belanja</div></a>
           </div>
         </div>
+        {% elif alfa %}
+        <div class="card">
+          <div class="card text-center">
+            <div class="card-header">
+            <img src="https://seeklogo.com/images/A/alfamart-logo-13EE0761D0-seeklogo.com.png" alt="icon_alfa" width="30px">
+              Alfamart</div>
+            <div class="card-body">
+              <h5 class="card-title">QONE 1234 5678 90</h5>
+              <p class="card-text">Silahkan lanjutkan pembayaran ke merchant alfamart terdekat</p>
+            </div>
+            <a href="{% url 'toko:alfa-return'%}"><div class="btn btn-info mb-2">Yuk Lanjut Belanja</div></a>
+          </div>
+        </div>
         {% else %}
         <div>Pembayaran Strip belum diaktifkan gunakan Paypal</div>
         <a href="{% url 'toko:payment' 'paypal' %}"><div class="btn btn-info">Paypal</div></a>
