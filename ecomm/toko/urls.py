@@ -17,4 +17,5 @@ urlpatterns = [
      path('cod-return/', views.cod_return, name='cod-return'),
      path('alfa-return/', views.alfa_return, name='alfa-return'),
      path('paypal-cancel/', views.paypal_cancel, name='paypal-cancel'),
+     path('kontak/', views.KontakView.as_view(), name='kontak'),
 ]

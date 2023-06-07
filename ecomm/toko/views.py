@@ -15,7 +15,7 @@ from .models import ProdukItem, OrderProdukItem, Order, AlamatPengiriman, Paymen
 class HomeListView(generic.ListView):
     template_name = 'home.html'
     queryset = ProdukItem.objects.all()
-    paginate_by = 4
+    paginate_by = 10
     def get_context_data(self, *, object_list=None, **kwargs):
         """Get the context for this view."""
         filterCat = self.request.GET.getlist('category')
@@ -58,11 +58,12 @@ class HomeListView(generic.ListView):
             context[context_object_name] = queryset
         context.update(kwargs)
         return super().get_context_data(**context)
-
 class ProductDetailView(generic.DetailView):
     template_name = 'product_detail.html'
     queryset = ProdukItem.objects.all()
-
+class KontakView(generic.ListView):
+    template_name = 'kontak.html'
+    queryset = ProdukItem.objects.all()
 class CheckoutView(LoginRequiredMixin, generic.FormView):
     def get(self, *args, **kwargs):
         form = CheckoutForm()
@@ -82,7 +83,7 @@ class CheckoutView(LoginRequiredMixin, generic.FormView):
         }
         template_name = 'checkout.html'
         return render(self.request, template_name, context)
-
+    
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
@@ -379,8 +380,6 @@ def alfa_return(request):
             return redirect('toko:order-summary')
     else:
         return redirect('/accounts/login')
-
-
 # @csrf_exempt
 def paypal_cancel(request):
     messages.error(request, 'Pembayaran dibatalkan')
