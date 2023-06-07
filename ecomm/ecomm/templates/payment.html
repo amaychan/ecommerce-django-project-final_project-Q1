@@ -6,10 +6,19 @@
   <div class="d-flex justify-content-center">
     <div class="row justify-content-center">
       <div class="col pt-5 pb-5">
-        <p>Total belanjaan kamu : <strong>${{ order.get_total_harga_order }}</strong></p>
+        <p>Total belanjaan kamu : <strong><h3>${{ order.get_total_harga_order }}</h3></strong></p>
         <br />
         {% if is_paypal %}
         <div>{{ paypalform.render }}</div>
+        {% elif is_cod %}
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Terimakasih telah berbelanja di Q-one</h5>
+            <p class="card-text"><i>Silahkan siapkan uang tunai sejumlah total belanja untuk melakukan pembayaran secara langsung melalui kurir.</i>
+            </p>
+            <a href="{% url 'toko:cod-return'%}"><div class="btn btn-info">Yuk Lanjut Belanja</div></a>
+          </div>
+        </div>
         {% else %}
         <div>Pembayaran Strip belum diaktifkan gunakan Paypal</div>
         <a href="{% url 'toko:payment' 'paypal' %}"><div class="btn btn-info">Paypal</div></a>

@@ -106,6 +106,10 @@ class CheckoutView(LoginRequiredMixin, generic.FormView):
                 order.save()
                 if opsi_pembayaran == 'P':
                     return redirect('toko:payment', payment_method='paypal')
+                elif opsi_pembayaran == 'C':
+                    return redirect('toko:payment', payment_method='COD')
+                elif opsi_pembayaran == 'A':
+                    return redirect('toko:payment', payment_method='Alfamart')
                 else:
                     return redirect('toko:payment', payment_method='stripe')
 
@@ -131,15 +135,19 @@ class PaymentView(LoginRequiredMixin, generic.FormView):
                 'return_url': self.request.build_absolute_uri(reverse('toko:paypal-return')),
                 'cancel_return': self.request.build_absolute_uri(reverse('toko:paypal-cancel')),
             }
-        
+            print(self.request.get_full_path())
             qPath = self.request.get_full_path()
             isPaypal = 'paypal' in qPath
+            isCod = 'COD' in qPath
+            alfa = 'Alfamart' in qPath
         
             form = PayPalPaymentsForm(initial=paypal_data)
             context = {
                 'paypalform': form,
                 'order': order,
                 'is_paypal': isPaypal,
+                'is_cod':isCod,
+                'alfa':alfa
             }
             return render(self.request, template_name, context)
 
@@ -301,7 +309,7 @@ def paypal_return(request):
             payment = Payment()
             payment.user=request.user
             payment.amount = order.get_total_harga_order()
-            payment.payment_option = 'P' # paypal kalai 'S' stripe
+            payment.payment_option = 'P' # paypal kalau 'S' stripe
             payment.charge_id = f'{order.id}-{timezone.now()}'
             payment.timestamp = timezone.now()
             payment.save()
@@ -314,6 +322,32 @@ def paypal_return(request):
             order.save()
 
             messages.info(request, 'Pembayaran sudah diterima, terima kasih')
+            return redirect('toko:home-produk-list')
+        except ObjectDoesNotExist:
+            messages.error(request, 'Periksa kembali pesananmu')
+            return redirect('toko:order-summary')
+    else:
+        return redirect('/accounts/login')
+def cod_return(request):
+    if request.user.is_authenticated:
+        try:
+            order = Order.objects.get(user=request.user, ordered=False)
+            payment = Payment()
+            payment.user=request.user
+            payment.amount = order.get_total_harga_order()
+            payment.payment_option = 'C'
+            payment.charge_id = f'{order.id}-{timezone.now()}'
+            payment.timestamp = timezone.now()
+            payment.save()
+            
+            order_produk_item = OrderProdukItem.objects.filter(user=request.user,ordered=False)
+            order_produk_item.update(ordered=True)
+            
+            # order.payment = payment
+            order.ordered = True
+            order.save()
+
+            messages.info(request, 'Menunggu Pembayaran COD, terima kasih')
             return redirect('toko:home-produk-list')
         except ObjectDoesNotExist:
             messages.error(request, 'Periksa kembali pesananmu')

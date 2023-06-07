@@ -5,6 +5,8 @@ from django_countries.widgets import CountrySelectWidget
 PILIHAN_PEMBAYARAN = (
     ('P', 'Paypal'),
     ('S', 'Stripe'),
+    ('A', 'Alfamart'),
+    ('C', 'COD'),
 )
 
 class CheckoutForm(forms.Form):
