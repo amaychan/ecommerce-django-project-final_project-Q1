@@ -33,16 +33,16 @@
 
                         <!-- Link -->
                         <li class="nav-item acitve">
-                            <a class="nav-link text-white" href="#">All</a>
+                            <a class="nav-link text-white" href="{{ request.path }}?category=">All</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Shirts</a>
+                            <a class="nav-link text-white" href="{{ request.path }}?category=S">Shirts</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Sport wears</a>
+                            <a class="nav-link text-white" href="{{ request.path }}?category=SW">Sport wears</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Outwears</a>
+                            <a class="nav-link text-white" href="{{ request.path }}?category=OW">Outwears</a>
                         </li>
 
                     </ul>
