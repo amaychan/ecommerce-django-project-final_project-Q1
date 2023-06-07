@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils import timezone
 from django.views import generic
+from django.db.models import Q
 from paypal.standard.forms import PayPalPaymentsForm
 
 
@@ -17,10 +18,20 @@ class HomeListView(generic.ListView):
     paginate_by = 4
     def get_context_data(self, *, object_list=None, **kwargs):
         """Get the context for this view."""
-        filterCat = self.request.GET.get('category')
+        filterCat = self.request.GET.getlist('category')
+        searchProduct = self.request.GET.get('search')
+        searchParam = "&"
+        if self.request.GET:
+            for key, value in self.request.GET.items():
+                if value:
+                    searchParam += key + '=' + value + '&'
+
+
         queryset = object_list if object_list is not None else self.object_list
+        if searchProduct:
+            queryset= ProdukItem.objects.filter(Q(nama_produk__icontains=searchProduct))
         if filterCat:
-            queryset= ProdukItem.objects.filter(kategori=filterCat)
+            queryset= ProdukItem.objects.filter(kategori__in=filterCat)
         page_size = self.get_paginate_by(queryset)
 
         context_object_name = self.get_context_object_name(queryset)
@@ -33,6 +44,7 @@ class HomeListView(generic.ListView):
                 "page_obj": page,
                 "is_paginated": is_paginated,
                 "object_list": queryset,
+                "searchParam":searchParam
             }
         else:
             context = {
@@ -40,6 +52,7 @@ class HomeListView(generic.ListView):
                 "page_obj": None,
                 "is_paginated": False,
                 "object_list": queryset,
+                "searchParam":searchParam
             }
         if context_object_name is not None:
             context[context_object_name] = queryset
