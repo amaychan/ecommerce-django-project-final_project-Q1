@@ -33,7 +33,6 @@ class HomeListView(generic.ListView):
         if filterCat:
             queryset= ProdukItem.objects.filter(kategori__in=filterCat)
         page_size = self.get_paginate_by(queryset)
-
         context_object_name = self.get_context_object_name(queryset)
         if page_size:
             paginator, page, queryset, is_paginated = self.paginate_queryset(
