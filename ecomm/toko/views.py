@@ -15,7 +15,7 @@ from .models import ProdukItem, OrderProdukItem, Order, AlamatPengiriman, Paymen
 class HomeListView(generic.ListView):
     template_name = 'home.html'
     queryset = ProdukItem.objects.all()
-    paginate_by = 10
+    paginate_by = 15
     def get_context_data(self, *, object_list=None, **kwargs):
         """Get the context for this view."""
         filterCat = self.request.GET.getlist('category')
